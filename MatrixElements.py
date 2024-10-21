@@ -3,6 +3,8 @@ import sympy as sy
 import itertools
 import pandas as pd
 import pywigxjpf as wig
+from numpy import linalg as LA
+import mpmath as mp 
 
 def compute_m(j):
 	projection = [i for i in range(-j,j+1)]
@@ -69,7 +71,7 @@ for i in coupled_moments_list:
 	print(compute_m(i))
 """
 A = [1]
-B = [0,1]
+B = [0,1,2]
 couples = form_possible_momentum_couples(A,B)
 coupled_moments = [couple_angular_momenta(i[0],i[1]) for i in couples]
 coupled_moments_list = []
@@ -99,7 +101,8 @@ print(ii)
 
 
 print("Testing function for constructing the basis set")
-BASIS = compute_ordered_basis_set([1],[0,1],1)
+BASIS = compute_ordered_basis_set(A,B,1)
+#BASIS = compute_ordered_basis_set(A,B,1)
 
 print(BASIS)
 
@@ -112,14 +115,31 @@ H_Matrix =  np.empty((10,10))
 #for i in BASIS:
 
 
+#np.set_printoptions(precision=3, suppress=True)
+
 ii=0
 jj=0
 for i in BASIS:
         for j in BASIS:
                 #print(compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0))
                 H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0)
-                
+
+
 df = pd.DataFrame(H_Matrix)
+df.to_csv('Matrix.txt', header=None, index=None, sep=' ', mode='a')
 print(df)
 
 
+matrix = mp.matrix(H_Matrix)
+eigenvalues, eigenvectors = mp.eig(matrix)
+
+#print(eigenvalues)
+
+
+
+print("All eigenvectors: ")
+print(eigenvectors)
+
+print("Some eigenvalues: ")
+#print(np.dot(eigenvectors[0],eigenvectors[1]))
+print(eigenvalues)
