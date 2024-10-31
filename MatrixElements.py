@@ -42,6 +42,37 @@ def compute_ordered_basis_set(A,B,LAMBDA):
 	return basis 
 
 
+def kronecker_delta(i,j):
+
+        if(i==j):
+                return 1
+        elif(i!=j):
+                return 0
+
+def compute_free_energies(J,k,n,cm_freq,vib_freq,B,C):
+
+        K = np.abs(k)
+        com_energy = (n+1.5)*cm_freq
+        vibrational_energy = 0.0
+
+        for i in vib_freq:
+                vibrational_energy += 0.5*i
+
+        rotational_energy = B*J*(J+1)+K**2*(C-B) 
+
+        total_energy = com_energy + vibrational_energy + rotational_energy
+        
+        return total_energy
+
+
+def compute_free_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjprime,lambprime,mlambprime,k,n,cm_freq,vib_freq,B,C):
+
+
+        return compute_free_energies(j,k,n,cm_freq,vib_freq,B,C)*kronecker_delta(j,jprime)*kronecker_delta(l,lprime)*kronecker_delta(ml,mlprime)*kronecker_delta(mj,mjprime)*kronecker_delta(lamb,lambprime)*kronecker_delta(mlamb,mlambprime)
+
+        
+
+
 def compute_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjprime,lambprime,mlambprime,k,kprime,K,L,J,F,mF):
 	coefficient1 = (-1)**(-J-j-jprime-mlamb-mlambprime+mF+mj+mlprime+k)
 	coefficient2 = np.sqrt(1/(32*np.pi**3))
@@ -70,8 +101,10 @@ print(list(set(coupled_moments_list))	)
 for i in coupled_moments_list:
 	print(compute_m(i))
 """
+
+
 A = [1]
-B = [0,1,2]
+B = [0,1]
 couples = form_possible_momentum_couples(A,B)
 coupled_moments = [couple_angular_momenta(i[0],i[1]) for i in couples]
 coupled_moments_list = []
@@ -81,7 +114,7 @@ for i in coupled_moments:
 
 non_repeated_moments = list(set(coupled_moments_list))
 
-L = 1
+L = 2
 
 
 ii=0
@@ -122,12 +155,17 @@ jj=0
 for i in BASIS:
         for j in BASIS:
                 #print(compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0))
-                H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0)
+               # H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0)
+                # H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_free_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,271.0,[717.87,519.55,519.55],2.92,1.46)
+                 H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_free_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,271.0,[717.87,519.55,519.55],2.92,1.46)+compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0) 
 
+
+                
 
 df = pd.DataFrame(H_Matrix)
 df.to_csv('Matrix.txt', header=None, index=None, sep=' ', mode='a')
 print(df)
+
 
 
 matrix = mp.matrix(H_Matrix)
@@ -143,3 +181,8 @@ print(eigenvectors)
 print("Some eigenvalues: ")
 #print(np.dot(eigenvectors[0],eigenvectors[1]))
 print(eigenvalues)
+
+
+print(compute_free_energies(0,0,0,271.0,[717.87,519.55,519.55],0,0))
+print(kronecker_delta(2,1))
+
