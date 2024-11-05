@@ -157,7 +157,7 @@ for i in BASIS:
                 #print(compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0))
                # H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0)
                 # H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_free_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,271.0,[717.87,519.55,519.55],2.92,1.46)
-                 H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_free_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,271.0,[717.87,519.55,519.55],2.92,1.46)+compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0) 
+                H_Matrix[BASIS.index(i),BASIS.index(j)] = (compute_free_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,271.0,[717.87,519.55,519.55],2.92,1.46)+1426.585*compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0) )
 
 
                 
@@ -178,11 +178,18 @@ eigenvalues, eigenvectors = mp.eig(matrix)
 print("All eigenvectors: ")
 print(eigenvectors)
 
-print("Some eigenvalues: ")
+print("\n")
+print("The eigenvalues are: \n")
 #print(np.dot(eigenvectors[0],eigenvectors[1]))
-print(eigenvalues)
+#print(eigenvalues)
+for eig in eigenvalues:
+        print(eig.real)
+
+print("n")
+print("Ender der Eigenwerte")
+        
 
 
-print(compute_free_energies(0,0,0,271.0,[717.87,519.55,519.55],0,0))
-print(kronecker_delta(2,1))
+#print(compute_free_energies(0,0,0,271.0,[717.87,519.55,519.55],0,0))
+#print(kronecker_delta(2,1))
 
