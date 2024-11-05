@@ -185,7 +185,7 @@ print("The eigenvalues are: \n")
 for eig in eigenvalues:
         print(eig.real)
 
-print("n")
+print("\n")
 print("Ender der Eigenwerte")
         
 
