@@ -102,8 +102,8 @@ for i in coupled_moments_list:
 """
 
 
-A = [1]
-B = [0,1]
+A = [1,3]
+B = [0,1,3,4,5]
 couples = form_possible_momentum_couples(A,B)
 coupled_moments = [couple_angular_momenta(i[0],i[1]) for i in couples]
 coupled_moments_list = []
@@ -113,36 +113,20 @@ for i in coupled_moments:
 
 non_repeated_moments = list(set(coupled_moments_list))
 
-L = 1
-
-
-ii=0
-print("l ml j mj L mL")
-for mL in compute_m(L):
-	for l in A:
-		for j in B: 
-			if L in couple_angular_momenta(l,j):
-				for ml in compute_m(l):
-					for mj in compute_m(j):
-						if (ml+mj) == mL:
-							print(l,ml,j,mj,L,mL)
-							ii += 1
-print(ii)
-
+L = 5
 
 
 
 print("Testing function for constructing the basis set")
-BASIS = compute_ordered_basis_set(A,B,1)
-#BASIS = compute_ordered_basis_set(A,B,1)
+BASIS = compute_ordered_basis_set(A,B,L)
 
 print(BASIS)
 
 
-wig.wig_table_init(20, 9)
+wig.wig_table_init(20,9)
 wig.wig_temp_init(20)
 
-H_Matrix =  np.empty((10,10))
+H_Matrix =  np.empty((len(BASIS),len(BASIS)))
 
 #for i in BASIS:
 
