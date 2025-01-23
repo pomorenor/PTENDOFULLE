@@ -27,18 +27,18 @@ def form_possible_momentum_couples(A,B):
 
 	return list(set(all_couples))
 
-def compute_ordered_basis_set(A,B,LAMBDA):
+
+def compute_ordered_basis_set(A, B, LAMBDA):
     basis = []
-    ii = 0
     for mLAMBDA in compute_m(LAMBDA):
         for l in A:
             for j in B:
-                for ml in compute_m(l):
-                    for mj in compute_m(j):
-                        if (ml+mj) == mLAMBDA:
-                            basis.append([l,ml,j,mj,LAMBDA,mLAMBDA])
-
-	return basis 
+                if LAMBDA in couple_angular_momenta(l, j):  # Only valid couplings
+                    for ml in compute_m(l):
+                        for mj in compute_m(j):
+                            if (ml + mj) == mLAMBDA:
+                                basis.append([l, ml, j, mj, LAMBDA, mLAMBDA])
+    return basis
 
 
 def kronecker_delta(i,j):
