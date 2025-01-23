@@ -28,16 +28,15 @@ def form_possible_momentum_couples(A,B):
 	return list(set(all_couples))
 
 def compute_ordered_basis_set(A,B,LAMBDA):
-	basis = []
-	ii = 0
-	for mLAMBDA in compute_m(LAMBDA):
-		for l in A:
-			for j in B:
-				if LAMBDA in couple_angular_momenta(l,j):
-					for ml in compute_m(l):
-						for mj in compute_m(j):
-							if (ml+mj) == mLAMBDA:
-								basis.append([l,ml,j,mj,LAMBDA,mLAMBDA])
+    basis = []
+    ii = 0
+    for mLAMBDA in compute_m(LAMBDA):
+        for l in A:
+            for j in B:
+                for ml in compute_m(l):
+                    for mj in compute_m(j):
+                        if (ml+mj) == mLAMBDA:
+                            basis.append([l,ml,j,mj,LAMBDA,mLAMBDA])
 
 	return basis 
 
@@ -74,15 +73,15 @@ def compute_free_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjpri
 
 
 def compute_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjprime,lambprime,mlambprime,k,kprime,K,L,J,F,mF):
-	coefficient1 = (-1)**(-J-j-jprime+mlamb+mlambprime+mF+mj+mlprime+k)
-	coefficient2 = np.sqrt(1/(32*np.pi**3))
-	coefficient3 = (2*lamb+1)*np.sqrt((2*lambprime+1)*(2*F+1)*(2*lamb+1)*(2*l+1)*(2*L+1)*(2*lprime+1)*(2*jprime+1)*(2*J+1)*(2*j+1))
-	wigner1 = wig.wig3jj(2*l,2*L,2*lprime,0,0,0)
-	wigner2 = wig.wig3jj(2*jprime, 2*J, 2*j,2*kprime, 2*K,2*k)
-	wigner3 = wig.wig3jj(2*lambprime,2*F,2*lamb,2*mlambprime,2*mF,2*mlamb)
-	wigner4 = wig.wig9jj(2*lprime,2*jprime,2*lambprime,2*L,2*J,2*F,2*l,2*j,2*lamb)
-	
-	return coefficient1*coefficient2*coefficient3*wigner1*wigner2*wigner3*wigner4
+        coefficient1 = (-1)**(-J-j-jprime+mlamb+mlambprime+mF+mj+mlprime+k)
+        coefficient2 = np.sqrt(1/(32*np.pi**3))
+        coefficient3 = (2*lamb+1)*np.sqrt((2*lambprime+1)*(2*F+1)*(2*lamb+1)*(2*l+1)*(2*L+1)*(2*lprime+1)*(2*jprime+1)*(2*J+1)*(2*j+1))
+        wigner1 = wig.wig3jj(2*l,2*L,2*lprime,0,0,0)
+        wigner2 = wig.wig3jj(2*jprime, 2*J, 2*j,2*kprime, 2*K,2*k)
+        wigner3 = wig.wig3jj(2*lambprime,2*F,2*lamb,2*mlambprime,2*mF,2*mlamb)
+        wigner4 = wig.wig9jj(2*lprime,2*jprime,2*lambprime,2*L,2*J,2*F,2*l,2*j,2*lamb)
+	 
+        return coefficient1*coefficient2*coefficient3*wigner1*wigner2*wigner3*wigner4
 
 """
 test = form_possible_momentum_couples([i for i in range(0,2)],[i for i in range(0,2)])
@@ -114,7 +113,7 @@ for i in coupled_moments:
 
 non_repeated_moments = list(set(coupled_moments_list))
 
-L = 2
+L = 1
 
 
 ii=0
