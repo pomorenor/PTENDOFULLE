@@ -5,6 +5,38 @@ import pandas as pd
 import pywigxjpf as wig
 from numpy import linalg as LA
 import mpmath as mp 
+from scipy.special import genlaguerre, gamma, factorial
+from scipy.integrate import quad 
+from math import sqrt, pi
+
+
+
+def V(r):
+       return 0.0174 + 0.0146*r**2 + 0.00174*r**4 + 0.000901*r**6 
+
+
+Nu = 9.5e-4
+beta = 2*pi*3*3*Nu
+
+
+def Fnl(R,v,l):
+        k = (v-l)//2
+        laguerre_poly = genlaguerre(k,l+0.5)
+
+        denom = (2**(k+l+1)*gamma(k+l+1.5))/sqrt(pi)
+
+        prefactor = 2*sqrt((beta**((2*l +3)/2)*2**(k+l)*factorial(k))/denom)
+
+        return prefactor*R**l*np.exp(-beta*R**2/2)*laguerre_poly(beta*R**2)
+
+def radialIntegrand(r, n, l):
+        R = Fnl(r,n,l)
+        return R*V(r)*R*r**2
+
+def radialMatrixElement(n,l):
+        result, error = quad(radialIntegrand,0, np.inf, args=(n,l))
+        return result
+
 
 def compute_m(j):
 	projection = [i for i in range(-j,j+1)]
@@ -53,7 +85,7 @@ def compute_free_energies(J,k,n,cm_freq,vib_freq,B,C):
         K = np.abs(k)
         com_energy = (n+1.5)*cm_freq
         vibrational_energy = 0.0
-
+ 
         for i in vib_freq:
                 vibrational_energy += 0.5*i
 
@@ -83,6 +115,8 @@ def compute_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjprime,la
 	 
         return coefficient1*coefficient2*coefficient3*wigner1*wigner2*wigner3*wigner4
 
+
+
 """
 test = form_possible_momentum_couples([i for i in range(0,2)],[i for i in range(0,2)])
 
@@ -101,9 +135,10 @@ for i in coupled_moments_list:
 	print(compute_m(i))
 """
 
+n = 4
 
-A = [1,3]
-B = [0,1,3,4,5]
+A = [0,2,4]
+B = [0,1,3,4]
 couples = form_possible_momentum_couples(A,B)
 coupled_moments = [couple_angular_momenta(i[0],i[1]) for i in couples]
 coupled_moments_list = []
@@ -113,7 +148,7 @@ for i in coupled_moments:
 
 non_repeated_moments = list(set(coupled_moments_list))
 
-L = 5
+L = 2
 
 
 
@@ -140,7 +175,7 @@ for i in BASIS:
                 #print(compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0))
                # H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0)
                 # H_Matrix[BASIS.index(i),BASIS.index(j)] = compute_free_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,271.0,[717.87,519.55,519.55],2.92,1.46)
-                H_Matrix[BASIS.index(i),BASIS.index(j)] = (compute_free_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,271.0,[717.87,519.55,519.55],2.92,1.46)+1426.585*compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0) )
+                H_Matrix[BASIS.index(i),BASIS.index(j)] = (compute_free_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,271.0,[717.87,519.55,519.55],2.92,1.46)+radialMatrixElement(n,ii)*compute_matrix_element(i[0],i[1],i[2],i[3],i[4],i[5],j[0],j[1],j[2],j[3],j[4],j[5],0,0,0,0,0,0,0) )
 
 
                 
