@@ -106,7 +106,7 @@ def compute_free_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjpri
 
 def compute_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjprime,lambprime,mlambprime,k,kprime,K,L,J,F,mF):
         coefficient1 = (-1)**(-J-j-jprime+mlamb+mlambprime+mF+mj+mlprime+k)
-        coefficient2 = np.sqrt(1/(32*np.pi**3))
+        coefficient2 = np.sqrt(1/(4*np.pi))
         coefficient3 = (2*lamb+1)*np.sqrt((2*lambprime+1)*(2*F+1)*(2*lamb+1)*(2*l+1)*(2*L+1)*(2*lprime+1)*(2*jprime+1)*(2*J+1)*(2*j+1))
         wigner1 = wig.wig3jj(2*l,2*L,2*lprime,0,0,0)
         wigner2 = wig.wig3jj(2*jprime, 2*J, 2*j,2*kprime, 2*K,2*k)
