@@ -135,7 +135,7 @@ for i in coupled_moments_list:
 	print(compute_m(i))
 """
 
-n = 4
+n = 0
 
 A = [0,2,4]
 B = [0,1,3,4]
