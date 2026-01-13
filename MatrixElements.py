@@ -12,7 +12,7 @@ from math import sqrt, pi
 
 
 def V(r):
-       return 0.0174 + 0.0146*r**2 + 0.00174*r**4 + 0.000901*r**6 
+       return 0.513 + 0.43*r**2 + 0.0519*r**4 + 0.000901*r**6 
 
 
 Nu = 9.5e-4
@@ -60,19 +60,6 @@ def form_possible_momentum_couples(A,B):
 	return list(set(all_couples))
 
 
-def compute_ordered_basis_set(A, B, LAMBDA):
-    basis = []
-    for mLAMBDA in compute_m(LAMBDA):
-        for l in A:
-            for j in B:
-                if LAMBDA in couple_angular_momenta(l, j):  # Only valid couplings
-                    for ml in compute_m(l):
-                        for mj in compute_m(j):
-                            if (ml + mj) == mLAMBDA:
-                                basis.append([l, ml, j, mj, LAMBDA, mLAMBDA])
-    return basis
-
-
 def kronecker_delta(i,j):
 
         if(i==j):
@@ -104,60 +91,60 @@ def compute_free_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjpri
         
 
 
-def compute_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjprime,lambprime,mlambprime,k,kprime,K,L,J,F,mF):
-        coefficient1 = (-1)**(-J-j-jprime+mlamb+mlambprime+mF+mj+mlprime+k)
-        coefficient2 = np.sqrt(1/(4*np.pi))
-        coefficient3 = (2*lamb+1)*np.sqrt((2*lambprime+1)*(2*F+1)*(2*lamb+1)*(2*l+1)*(2*L+1)*(2*lprime+1)*(2*jprime+1)*(2*J+1)*(2*j+1))
-        wigner1 = wig.wig3jj(2*l,2*L,2*lprime,0,0,0)
-        wigner2 = wig.wig3jj(2*jprime, 2*J, 2*j,2*kprime, 2*K,2*k)
-        wigner3 = wig.wig3jj(2*lambprime,2*F,2*lamb,2*mlambprime,2*mF,2*mlamb)
-        wigner4 = wig.wig9jj(2*lprime,2*jprime,2*lambprime,2*L,2*J,2*F,2*l,2*j,2*lamb)
+
+def compute_matrix_element(l,j,lamb,L,J,Q,lprime,jprime, lambprime,kj,kJ,kjprime,mlamb, mQ, mlambprime):
+        coefficient1 = (-1)**(kjprime)*(-1)**(-jprime)*(-1)**(-J+mQ)*(-1)**(-j+mlamb)
+        coefficient2 = np.sqrt(1/(8*np.pi**2))
+        coefficient3 = (2*lambprime+1)*np.sqrt((2*lambprime+1)*(2*Q+1)*(2*lamb+1)*(2*l+1)*(2*L+1)*(2*lprime+1)*(2*jprime+1)*(2*J+1)*(2*j+1))
+        wigner1 = wig.wig3jj(2*lprime,2*L,2*l,0,0,0)
+        wigner2 = wig.wig3jj(2*j, 2*J, 2*jprime,2*kj, 2*kJ,-2*kjprime)
+        wigner3 = wig.wig3jj(2*lamb,2*Q,2*lambprime,2*mlamb,2*mQ,2*mlambprime)
+        wigner4 = wig.wig9jj(2*l,2*j,2*lamb,2*L,2*J,2*Q,2*lprime,2*jprime,2*lambprime)
 	 
         return coefficient1*coefficient2*coefficient3*wigner1*wigner2*wigner3*wigner4
 
 
+n = 1
+j = 2
 
-"""
-test = form_possible_momentum_couples([i for i in range(0,2)],[i for i in range(0,2)])
 
-coupled_moments = [couple_angular_momenta(i[0],i[1]) for i in test]
-coupled_moments_list = []
+coupled_moments = couple_angular_momenta(n,j)
+lambda_mj = compute_m(coupled_moments[0])
 
 print(coupled_moments)
+print(coupled_moments[0], lambda_mj)
 
-for i in coupled_moments:
-	for j in range(0,len(i)):
-		coupled_moments_list.append(i[j])
 
-print(list(set(coupled_moments_list))	)
+wig.wig_table_init(20,9)
+wig.wig_temp_init(20)
 
-for i in coupled_moments_list:
-	print(compute_m(i))
+print(compute_matrix_element(1,2,1,2,0,0,1,2,1,1,0,1,0,0,-1))
+
+print(compute_matrix_element(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
+
+
+
+
+H_Matrix = np.empty((3,3))
+
+for ii in range(0,3):
+    for jj in range(0,3):
+        H_Matrix[ii,jj] = compute_free_energies(2,2,1,271.0,[717.87,519.55,519.55],2.92,1.46)+radialMatrixElement(1,1)*compute_matrix_element(1,2,1,0,0,0,1,2,1,1,0,1,lambda_mj[ii],0,lambda_mj[jj])
+         
+
+matrix = mp.matrix(H_Matrix)
+eigenvalues, eigenvectors = mp.eig(matrix)
+
+print(eigenvalues)
+
+
+
+#print("Testing function for constructing the basis set")
+#BASIS = compute_ordered_basis_set(A,B,L)
+
+#print(BASIS)
+
 """
-
-n = 0
-
-A = [0,2,4]
-B = [0,1,3,4]
-couples = form_possible_momentum_couples(A,B)
-coupled_moments = [couple_angular_momenta(i[0],i[1]) for i in couples]
-coupled_moments_list = []
-for i in coupled_moments:
-	for j in range(0,len(i)):
-		coupled_moments_list.append(i[j])
-
-non_repeated_moments = list(set(coupled_moments_list))
-
-L = 2
-
-
-
-print("Testing function for constructing the basis set")
-BASIS = compute_ordered_basis_set(A,B,L)
-
-print(BASIS)
-
-
 wig.wig_table_init(20,9)
 wig.wig_temp_init(20)
 
@@ -216,4 +203,4 @@ print("Ender der Eigenwerte")
 
 #print(compute_free_energies(0,0,0,271.0,[717.87,519.55,519.55],0,0))
 #print(kronecker_delta(2,1))
-
+"""
