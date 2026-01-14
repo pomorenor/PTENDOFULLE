@@ -5,27 +5,27 @@ import pandas as pd
 import pywigxjpf as wig
 from numpy import linalg as LA
 import mpmath as mp 
-from scipy.special import genlaguerre, gamma, factorial
+from scipy.special import genlaguerre, gamma, factorial, factorial2
 from scipy.integrate import quad 
 from math import sqrt, pi
 
 
-
 def V(r):
+
        return 0.513 + 0.43*r**2 + 0.0519*r**4 + 0.000901*r**6 
+       #return 0.683 + 0.58*r**2 + 0.0646*r**4 + 0.036*r**6 
+       #return 0.683 + 0.58*r**2 + 0.0646*r**4 + 0.036*r**6 
 
 
-Nu = 9.5e-4
-beta = 2*pi*3*3*Nu
+Nu = 1.235E-3
+beta = 2*pi*3*5494.8926*Nu
 
 
-def Fnl(R,v,l):
-        k = (v-l)//2
+def Fnl(R,n,l):
+        k = (n-l)//2
         laguerre_poly = genlaguerre(k,l+0.5)
 
-        denom = (2**(k+l+1)*gamma(k+l+1.5))/sqrt(pi)
-
-        prefactor = 2*sqrt((beta**((2*l +3)/2)*2**(k+l)*factorial(k))/denom)
+        prefactor = 2*sqrt((beta**((2*l +3)/2)*2**(k+l)*factorial(k))/np.sqrt(pi)*factorial2(2*(k+l)+1))
 
         return prefactor*R**l*np.exp(-beta*R**2/2)*laguerre_poly(beta*R**2)
 
@@ -94,7 +94,7 @@ def compute_free_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjpri
 
 def compute_matrix_element(l,j,lamb,L,J,Q,lprime,jprime, lambprime,kj,kJ,kjprime,mlamb, mQ, mlambprime):
         coefficient1 = (-1)**(kjprime)*(-1)**(-jprime)*(-1)**(-J+mQ)*(-1)**(-j+mlamb)
-        coefficient2 = np.sqrt(1/(8*np.pi**2))
+        coefficient2 = np.sqrt(1/((4*np.pi)*(8*np.pi**2)))
         coefficient3 = (2*lambprime+1)*np.sqrt((2*lambprime+1)*(2*Q+1)*(2*lamb+1)*(2*l+1)*(2*L+1)*(2*lprime+1)*(2*jprime+1)*(2*J+1)*(2*j+1))
         wigner1 = wig.wig3jj(2*lprime,2*L,2*l,0,0,0)
         wigner2 = wig.wig3jj(2*j, 2*J, 2*jprime,2*kj, 2*kJ,-2*kjprime)
@@ -108,34 +108,8 @@ n = 1
 j = 2
 
 
-coupled_moments = couple_angular_momenta(n,j)
-lambda_mj = compute_m(coupled_moments[0])
-
-print(coupled_moments)
-print(coupled_moments[0], lambda_mj)
 
 
-wig.wig_table_init(20,9)
-wig.wig_temp_init(20)
-
-print(compute_matrix_element(1,2,1,2,0,0,1,2,1,1,0,1,0,0,-1))
-
-print(compute_matrix_element(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
-
-
-
-
-H_Matrix = np.empty((3,3))
-
-for ii in range(0,3):
-    for jj in range(0,3):
-        H_Matrix[ii,jj] = compute_free_energies(2,2,1,271.0,[717.87,519.55,519.55],2.92,1.46)+radialMatrixElement(1,1)*compute_matrix_element(1,2,1,0,0,0,1,2,1,1,0,1,lambda_mj[ii],0,lambda_mj[jj])
-         
-
-matrix = mp.matrix(H_Matrix)
-eigenvalues, eigenvectors = mp.eig(matrix)
-
-print(eigenvalues)
 
 
 
@@ -204,3 +178,11 @@ print("Ender der Eigenwerte")
 #print(compute_free_energies(0,0,0,271.0,[717.87,519.55,519.55],0,0))
 #print(kronecker_delta(2,1))
 """
+
+wig.wig_table_init(20,9)
+wig.wig_temp_init(20)
+
+
+print(radialMatrixElement(0,0)*compute_matrix_element(0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 0))
+
+
