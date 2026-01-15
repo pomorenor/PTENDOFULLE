@@ -80,7 +80,7 @@ def compute_free_energies(J,k,n,cm_freq,vib_freq,B,C):
 
         total_energy = com_energy + vibrational_energy + rotational_energy
         
-        return total_energy
+        return total_energy*0.0000046
 
 
 def compute_free_matrix_element(l,ml,j,mj,lamb,mlamb,lprime,mlprime,jprime,mjprime,lambprime,mlambprime,k,n,cm_freq,vib_freq,B,C):
@@ -183,6 +183,6 @@ wig.wig_table_init(20,9)
 wig.wig_temp_init(20)
 
 
-print(radialMatrixElement(0,0)*compute_matrix_element(0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 0))
+print(compute_free_energies(0,0,0,271.33,[717.87,519.55,519.55],2.92,1.46) +radialMatrixElement(0,0)*compute_matrix_element(0,0,0,0,0,0,0,0,0,0,0,0,0, 0, 0))
 
 
