@@ -85,7 +85,9 @@ def totalMatrixElement(G,Q,L,J,mQ,n,cm_freq,vib_freq,B,C,l,j,lamb,lprime,jprime,
             for jj in J:
                 for qq in Q:
                     for mQmQ in mQ:
-                        result += angularMatrixElement(l,j,lamb,ll,jj,qq,lprime,jprime, lambprime,kj,kJ,kjprime,mlamb, mQmQ, mlambprime)*radialMatrixElement(n,l,G[(qq,mQmQ,ll,jj)])
+                        key = (qq,mQmQ,ll,jj)
+                        if key in G:  
+                            result += angularMatrixElement(l,j,lamb,ll,jj,qq,lprime,jprime, lambprime,kj,kJ,kjprime,mlamb, mQmQ, mlambprime)*radialMatrixElement(n,l,G[key])
 
         if j== jprime and kj==kjprime:
                result += compute_H0(j,kj,n,cm_freq,vib_freq,B,C)
@@ -95,5 +97,5 @@ def totalMatrixElement(G,Q,L,J,mQ,n,cm_freq,vib_freq,B,C,l,j,lamb,lprime,jprime,
 wig.wig_table_init(20,9)
 wig.wig_temp_init(20)
 
-print(totalMatrixElement(G, [0], [0], [0], [0], 0, 271.33, [717.87,519.55,519.55], 2.92, 1.46,
+print(totalMatrixElement(G, [0,2], [0], [0,2], [0], 0, 271.33, [717.87,519.55,519.55], 2.92, 1.46,
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)) #     def totalMatrixElement(G,Q,L,J,mQ,n,cm_freq,vib_freq,B,C,l,j,lamb,lprime,jprime, lambprime,kj,kJ,kjprime,mlamb,mlambprime ):
