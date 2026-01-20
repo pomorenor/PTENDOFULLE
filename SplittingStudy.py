@@ -82,22 +82,6 @@ def angularMatrixElement(l,j,lamb,L,J,Q,lprime,jprime, lambprime,kj,kJ,kjprime,m
 	 
         return coefficient1*coefficient2*coefficient3*wigner1*wigner2*wigner3*wigner4
 
-def totalMatrixElement(G,Q,L,J,mQ,n,cm_freq,vib_freq,B,C,l,j,lamb,lprime,jprime, lambprime,kj,kJ,kjprime,mlamb,mlambprime ):
-
-        result = 0.0
-
-        for ll in L:
-            for jj in J:
-                for qq in Q:
-                    for mQmQ in mQ:
-                        key = (qq,mQmQ,ll,jj)
-                        if key in G:  
-                            result += angularMatrixElement(l,j,lamb,ll,jj,qq,lprime,jprime, lambprime,kj,kJ,kjprime,mlamb, mQmQ, mlambprime)*radialMatrixElement(n,l,G[key])
-
-        if j== jprime and kj==kjprime:
-               result += compute_H0(j,kj,n,cm_freq,vib_freq,B,C)
-               
-        return result
 
 
 def build_basis_with_different_jk(jk_pairs):
@@ -186,9 +170,9 @@ def build_hamiltonian_matrix(basis, G_dict, Q_range, L_range, J_range, mQ_range,
             if i == j:
                 H_ij += compute_H0(j_i, kj_i, n_i, cm_freq, vib_freq, B, C)
             
-            H[i, j] = H_ij*220000
-            if i != j:
-                H[j, i] = np.conj(H_ij)  # Hermitian conjugate
+            H[i, j] = H_ij*220000 
+            #if i != j:
+            #    H[j, i] = np.conj(H_ij)  # Hermitian conjugate
     
     return H
 
@@ -252,8 +236,7 @@ if __name__ == "__main__":
     C = 1.46
     
     # Define the jk pairs you want
-    jk_pairs = [(0,0),(2,2)]
-    
+    jk_pairs = [(3,0)]
     # Build basis
     basis = build_basis_with_different_jk(jk_pairs)
     print(f"\nBasis has {len(basis)} states")
@@ -287,15 +270,35 @@ if __name__ == "__main__":
     #    print(f"E{i+1:2d} = {eig:18.12f} Eh")
     
     for ii in real_eigs:
-         if (ii > 0.02248*22000 and ii<0.1*22000):
-            print((ii)*0.0000046+0.016446573767559227)
+         #if (ii > 0.02248*22000 and ii<0.1*22000):
+        print((ii)*0.0000046)
 
-"""
+    #for ii in real_eigs:
+        #print((ii)*0.0000046+0.016446573767559227)
+
     # Your eigenvalues list (real_eigs) from the code above
-    # Convert to relative energies
-    releg = [eig+0.016446573767559227*220000- 0.0225122544967699*22000  for eig in real_eigs]
-    relative_energies = [ii for ii in releg if ii > 0]
+    # Convert to forrelative energies
+    releg = [0.022512254,
+0.02257388,
+0.022567083,
+0.022546693,
+0.022726409,
+0.022719612,
+0.022699222,
+0.022665239,
+0.022906124,
+0.022899328,
+0.022878938,
+0.022844955,
+0.022797379,
+0.023113026,
+0.023106229,
+0.02308584
+]
+    relative_energies = [(ii-0.022512254)*220000 for ii in releg]
     # Create vertical energy level plot
+  
+"""
     plt.figure(figsize=(8, 10))
     plt.hlines(y=relative_energies, xmin=0, xmax=1, colors='blue', linewidth=2)
     plt.scatter([0.5]*len(relative_energies), relative_energies, s=50, color='red')
@@ -310,9 +313,18 @@ if __name__ == "__main__":
     plt.show()
 """
 
-print("GS Energy:")
-print(0.0225122544967699-angularMatrixElement(0,0,0,0,0,0,0,0, 0,0,0,0,0, 0, 0)*radialMatrixElement(0,0,G0000))
 print("Well bottom:")
 print(angularMatrixElement(0,0,0,0,0,0,0,0, 0,0,0,0,0, 0, 0)*radialMatrixElement(0,0,G0000))
-print("Total energy:")
-print(angularMatrixElement(0,0,0,0,0,0,0,0, 0,0,0,0,0, 0, 0)*radialMatrixElement(0,0,G0000))
+print("Total energy Ground State:")
+print("cm-1:", 220000*(compute_H0(1,1,0,254.73,[717.87,519.55,519.55],2.92,1.46) + angularMatrixElement(0,1,0,0,0,0,0,1, 0,1,0,1,0, 0, 0)*radialMatrixElement(0,0,G0000)))
+print("Eh:", 1*(compute_H0(1,1,0,254.73,[717.87,519.55,519.55],2.92,1.46) + angularMatrixElement(0,1,0,0,0,0,0,1, 0,1,0,1,0, 0, 0)*radialMatrixElement(0,0,G0000)))
+
+
+print("State correction:")
+print("cm-1:", 220000*(compute_H0(3,1,0,254.73,[717.87,519.55,519.55],2.92,1.46) + 0*angularMatrixElement(0,0,0,0,0,0,0,0, 0,0,0,0,0, 0, 0)*radialMatrixElement(0,0,G0000)))
+print("Eh:", 1*(compute_H0(3,1,0,254.73,[717.87,519.55,519.55],2.92,1.46) + 0*angularMatrixElement(0,0,0,0,0,0,0,0, 0,0,0,0,0, 0, 0)*radialMatrixElement(0,0,G0000)))
+
+print(relative_energies)
+
+
+
